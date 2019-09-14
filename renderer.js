@@ -17,7 +17,8 @@ connection.iceServers = [{
 connection.enableScalableBroadcast = true;
 connection.maxRelayLimitPerUser = 1;
 connection.autoCloseEntireSession = true;
-connection.socketURL = 'http://ws.letswatch.video/';
+//connection.socketURL = 'http://ws.letswatch.video/';
+connection.socketURL = 'http://localhost:8432/';
 connection.socketMessageEvent = 'letswatch';
 
 connection.socketCustomParameters = '&streamToken='+ config.streamToken + '&extra=' + JSON.stringify(connection.extra);
@@ -93,11 +94,11 @@ connection.connectSocket(function(socket){
                     .then(async sources => {
                         console.log(sources);
                         let constraints2 = {
-                            audio: /*{
+                            audio: {
                                 mandatory: {
                                   chromeMediaSource: 'desktop'
                                 }
-                            }*/false,
+                            },
                             video: {
                                 mandatory: {
                                     chromeMediaSource: 'desktop',
@@ -123,5 +124,6 @@ connection.connectSocket(function(socket){
 function handleStream(stream){
     const video = document.querySelector('video')
     video.srcObject = stream
+    video.muted = true
     video.onloadedmetadata = (e) => video.play()  
  }
