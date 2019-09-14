@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="no" class="desktop" data-basepath="/">
+    <head>
+        <meta charset="utf-8">
+        <title>letswatch</title>
+    </head>
+    <body>
+        <p>test</p>
+        <video width="1920" height="1080"></video>
+        <script type="text/javascript">
+            const env = require('electron').remote.process.env;
+            const config = {
+                broadcastId: env.broadcastId || 'max-memes',
+                streamToken: env.streamToken || 'correcthorsebatterystaple'
+            };
+        </script>
+        <script type="text/javascript" src="renderer.js"></script>
+    </body>
+</html>
