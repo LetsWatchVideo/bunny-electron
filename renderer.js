@@ -103,7 +103,7 @@ connection.connectSocket(function(socket){
                     })
                     .then(async sources => {
                         console.log(sources);
-                        navigator.mediaDevices.getUserMedia(config.mediaConstraints)
+                        navigator.mediaDevices.getUserMedia(connection.mediaConstraints)
                             .then(function(stream){
                                 console.log('stream', stream);
                                 handleStream(stream);
