@@ -26,11 +26,21 @@ connection.userid = 'streamer';
 
 connection.mediaConstraints = {
     screen: {
-        width: 1280,
-        height: 720,
+        width: 1920,
+        height: 1080,
         frameRate: 30
     },
+    video: {
+        mandatory: {
+            chromeMediaSource: 'desktop',
+            maxWidth: 1920,
+            maxHeight: 1080
+        }
+    },
     audio: {
+        mandatory: {
+          chromeMediaSource: 'desktop'
+        },
         echoCancellation: false,
         googEchoCancellation: false,
         googAutoGainControl: false,
@@ -93,21 +103,7 @@ connection.connectSocket(function(socket){
                     })
                     .then(async sources => {
                         console.log(sources);
-                        let constraints2 = {
-                            audio: {
-                                mandatory: {
-                                  chromeMediaSource: 'desktop'
-                                }
-                            },
-                            video: {
-                                mandatory: {
-                                    chromeMediaSource: 'desktop',
-                                    maxWidth: 1920,
-                                    maxHeight: 1080
-                                }
-                            }
-                        }
-                        navigator.mediaDevices.getUserMedia(constraints2)
+                        navigator.mediaDevices.getUserMedia(config.mediaConstraints)
                             .then(function(stream){
                                 console.log('stream', stream);
                                 handleStream(stream);
