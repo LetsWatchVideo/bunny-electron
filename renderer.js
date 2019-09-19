@@ -17,8 +17,8 @@ connection.iceServers = [{
 connection.enableScalableBroadcast = true;
 connection.maxRelayLimitPerUser = 1;
 connection.autoCloseEntireSession = true;
-//connection.socketURL = 'http://ws.letswatch.video/';
-connection.socketURL = 'http://localhost:8432/';
+//connection.socketURL = 'http://ws.letswatch.video/rtc';
+connection.socketURL = 'http://localhost:8432/rtc';
 connection.socketMessageEvent = 'letswatch';
 
 connection.socketCustomParameters = '&streamToken='+ config.streamToken + '&extra=' + JSON.stringify(connection.extra);

@@ -1,4 +1,5 @@
 var config = {
+	'apiURL': process.env.apiURL || 'https://api.letswatch.video',
 	'socketURL': '/',
 	'dirPath': '',
 	'homePage': '/',
@@ -14,6 +15,7 @@ var config = {
 var httpServer = require('http');
 var RTCMultiConnectionServer = require('rtcmulticonnection-server');
 var ioServer = require('socket.io');
+var fetch = require('node-fetch');
 
 var app = httpServer.createServer();
 RTCMultiConnectionServer.beforeHttpListen(app, config);
@@ -21,14 +23,13 @@ app = app.listen(config['port'], process.env.IP || '0.0.0.0', function(){
 	RTCMultiConnectionServer.afterHttpListen(app, config);
 });
 
-// --------------------------
-// socket.io codes goes below
-
-ioServer(app).on('connection', function (socket){
+// WebRTC Signaling Server
+let rtc = ioServer(app).of('rtc');
+rtc.on('connection', function (socket){
 	const params = socket.handshake.query;
 
 	socket.on('start-broadcasting', (args) => {
-		console.log(arguments);
+		console.log('start-broadcasting', args);
 		// Extra checks to only let the electron server stream
 		// If there is a streamToken, validate it
 		if(params.streamToken){
@@ -51,4 +52,35 @@ ioServer(app).on('connection', function (socket){
 	socket.on(params.socketCustomEvent, function(message){
 		socket.broadcast.emit(params.socketCustomEvent, message);
 	});
+});
+// Remote server
+let remote = ioServer(app).of('remote');
+remote.on('connection', function (socket){
+	const params = socket.handshake.query;
+
+	socket.use((socket, next) => {
+		if(params && params.token){
+			try{
+				const response = await fetch(
+					`${config.apiURL}/room/remote`,
+					{
+						body: {
+							token: params.token
+						}
+					}
+				);
+				if(response.status === 200) next();
+			}catch(error){
+				console.log(error);
+				next(new Error('Authentication error'));
+			}
+			
+		}else{
+			next(new Error('Authentication error'));
+		}
+	})
+	.on('message', () => {
+		// Send message to everyone but ourselves
+		socket.broadcast.emit('message', message);
+	})
 });
