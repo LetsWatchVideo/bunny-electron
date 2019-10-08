@@ -58,7 +58,7 @@ let remote = ioServer(app).of('remote');
 remote.on('connection', function (socket){
 	const params = socket.handshake.query;
 
-	socket.use((socket, next) => {
+	socket.use(async (socket, next) => {
 		if(params && params.token){
 			try{
 				const response = await fetch(
